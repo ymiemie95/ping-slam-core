@@ -1,0 +1,37 @@
+# Build products and local tools
+build/
+install/
+log/
+__pycache__/
+*.py[cod]
+.vscode/
+.idea/
+.history/
+
+# Local coding-assistant configuration and instructions
+.codex/
+.claude/
+.agents/
+AGENTS.md
+AGENTS.override.md
+CLAUDE.md
+CLAUDE.local.md
+
+# Data, manuscript, experiments and recordings
+data/
+recordresults/
+paper/
+paper_data/
+paper_video/
+tuning_runs/
+allrawresults/
+*.db3
+*.bag
+*.mkv
+*.mp4
+
+# Runtime exports
+/pingslamTraj_*.txt
+/map_*.pgm
+/map_*.yaml
+/scripts/pingslamTraj_*.txt

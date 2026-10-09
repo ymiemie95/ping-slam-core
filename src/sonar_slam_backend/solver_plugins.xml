@@ -1,0 +1,8 @@
+<library path="ceres_solver_plugin">
+  <class 
+    name="solver_plugins::CeresSolver" 
+    type="solver_plugins::CeresSolver" 
+    base_class_type="karto::ScanSolver">
+    <description> Ceres Optimizer for Slam Toolbox </description>
+  </class>
+</library>

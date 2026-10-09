@@ -1,0 +1,72 @@
+# ════════════════════════════════════════════════════════════════
+# sonar_to_laserscan_params.yaml —— 甲鱼池 50×15m 长包 定稿 v2
+#
+# 驱动配置: range=30m, step=4, gain=1, 400采样/束 (7.5cm/bin), ~4.4束/s
+# 数据事实 (fishpool_20260728_213807, 8432束/31.8min 实测):
+#   - 0-1.2m  近场饱和余振 (P50=173)
+#   - ~4.4m   体固连水底回波环 (DVL高0.94m × 25°垂直波束), 零位置信息, 必须切掉
+#   - 12-20m  真实岸壁 (池坐标系横向峰值稳定; 20m外24%拾取为噪声)
+#   - validBins 实测: 中位20, 16%的帧<12点 → 必须用 min_valid_bins_per_scan 闸门
+#   - 孤立点滤波 tol=1.0 时上墙厚度 std=0.59m (关掉滤波涨到1.02m), 保留滤波
+# ════════════════════════════════════════════════════════════════
+sonarToLaserscan:
+  ros__parameters:
+    use_sim_time: true
+
+    # ── 距离提取: 滑窗中值背景剔除 ────────────────────────────
+    range_extraction_method: "max"
+    bg_window_beams: 100             # step=4 → 100束 = 一整圈
+    bg_min_fill_beams: 25            # 冷启动: 前~6s无输出, 正常
+    residual_threshold: 15.0         # 丢弃率若>30%再降到15
+    intensity_threshold: 40.0        # 仅 max 模式使用 (max_bgsub 改用 residual_threshold)
+
+    # ── LaserScan 角度栅格 ────────────────────────────────────
+    angle_increment: 0.01570796      # 2π/400 (step=1 → 400束/圈)
+
+    # ── 距离门 ────────────────────────────────────────────────
+    range_min: 0.7                  # 抬到水底回波环(~4.4m)与混响尾之上
+    range_max: 7.0                   # Dataset0x 声呐量程 7m
+
+    # ── 孤立点滤波 ────────────────────────────────────────────
+    # tol = scan_outlier_distance + scan_outlier_range_ratio × r
+    enable_scan_outlier_filter: true
+    scan_outlier_distance: 1.0       # ★不要改大★ 实测这是墙最锐的设置
+    scan_outlier_range_ratio: 0.0    # 先保持0; 若斜看岸段丢点严重可试0.03
+    scan_outlier_half_window: 2
+    scan_outlier_min_neighbors: 2
+
+    # ── 连续段滤波 (只用连续性先验, 无直线/矩形形状假设) ──────
+    # 相邻有效点: bin间隔<=max_gap 且 径向跳变<=jump_per_bin×间隔 → 同段;
+    # 只保留 >=min_points 的段。散斑因不连续被剔除, 曲岸/直墙同样保留。
+    # 长包实测(2/1.2/4): 发布点纯净度 52%→93%, validBins 35→19,
+    # Karto response=点均值 → 预期响应接近翻倍 (SEQ 0.07档 → 0.13-0.15档)
+    enable_segment_filter: true
+    segment_max_gap_bins: 2
+    segment_jump_per_bin: 1.2
+    segment_min_points: 4
+    
+    # ── 结构化加密 (段内弦线插值, 观测增强) ──────────────────
+    # 只在段滤波验证过的段内插值, 跨段断裂保持空白;
+    # validBins 闸门在加密之前用原始点数判定, 插值点不参与闸门
+    enable_segment_densify: false     # 消融 B 组 true / A 组 false
+    densify_step: 0.03               # 弦线采样间隔 m
+    densify_output_bins: 1600         # 输出角分辨率 400 bin = 0.9°
+
+
+    # ── 切帧策略 ──────────────────────────────────────────────
+    frame_accumulate_angle: 4.71238898   # 3π/2
+    publish_interval_angle: 0.78539816   # ★2026-08-27 定稿★ π/2→π/4, ~5.2s/帧×2 帧率
+    # 双闸门: beams 管"声呐转够没有"(防丢包/启动), validBins 管"看到东西没有"
+    min_beams_per_scan: 40               # 实测恒75, 只在驱动丢包时触发, 保留兜底
+    min_valid_bins_per_scan: 10         # 7m量程池中央空帧多(D107经验)
+
+    # ── TF 帧名 ────────────────────────────────────────────────
+    laser_frame: "sonar_link"
+    base_frame:  "base_link"
+    odom_frame:  "odom"
+
+    # ── 声呐安装外参 ───────────────────────────────────────────
+    sonar_x: 0.0
+    sonar_y: 0.0
+    sonar_z: 0.0
+    sonar_yaw: 3.14159265            # 朝后安装 yaw=π

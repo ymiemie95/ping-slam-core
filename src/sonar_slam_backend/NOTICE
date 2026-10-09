@@ -1,0 +1,41 @@
+sonar_slam_backend — a modified fork of slam_toolbox (LGPL-2.1)
+
+This package is derived from SteveMacenski/slam_toolbox, foxy branch,
+upstream commit 4786e90 ("backport #377 foxy (#477)", 2022-02-22), which
+in turn bundles the Karto SDK (lib/karto_sdk). The back-end sources retain
+the upstream LGPL-2.1 notice in LICENSE; the Karto SDK has its own LGPL-3.0
+notice in lib/karto_sdk/LICENSE. Some retained upstream headers also carry
+their original Creative Commons Public License notice. These component
+licenses are separate and are not replaced by the package.xml summary.
+
+Modified 2026 for a Ping360 mechanical-scanning-sonar SLAM system. The
+package and its C++ namespace were renamed from slam_toolbox to
+sonar_slam_backend; upstream features not used by that system (lifelong
+and localization modes, async node, map merging, the RViz plugin, tests,
+sample configs and launch files) were removed. Files whose logic changed:
+
+  lib/karto_sdk/src/Mapper.cpp, lib/karto_sdk/include/karto_sdk/Mapper.h
+      loop-closure decision layer: response thresholds set from the
+      platform's measured match-response distribution; a position-jump
+      gate (LoopMatchMaximumPositionJump) that rejects a loop candidate
+      whose implied pose correction exceeds a scene-scaled bound; grid-
+      index guards in the correlation search (out-of-range candidates
+      score zero instead of throwing); failed matches degrade to zero
+      response / maximal covariance instead of aborting.
+  src/sonar_slam_backend_common.cpp, include/.../sonar_slam_backend_common.hpp
+      per-scan exception isolation so one degenerate frame is skipped
+      rather than terminating mapping; rollback of a half-registered scan.
+  src/slam_mapper.cpp
+      exposes the new loop-closure parameters.
+  CMakeLists.txt, package.xml
+      trimmed to the retained sources.
+
+The modified files above describe implementation changes made for this
+repository. Experimental rationale and parameter values are documented in
+the accompanying manuscript and configuration files; this notice is not a
+claim that the modified implementation is numerically identical to the
+upstream package.
+
+Release packaging (2026-10-09): the unused G2O CMake requirement and
+commented-out solver plugin examples were removed. Ceres remains the solver.
+The package manifest now declares nav2_map_server, used by the map export service.

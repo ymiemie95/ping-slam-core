@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>sonar_slam_frontend</name>
+  <version>1.0.0</version>
+  <description>
+    Front end of the Ping360 mechanical-scanning-sonar SLAM system:
+    DVL/IMU EKF odometry (ekfNode) and the sonar-echo to LaserScan pseudo-scan
+    builder (sonarToLaserscan: background-subtracted range extraction, EKF-based
+    motion compensation, segment densification). Pairs with sonar_slam_backend.
+  </description>
+  <maintainer email="ymiemie345@gmail.com">ymiemie95</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>eigen3_cmake_module</buildtool_depend>
+
+  <depend>eigen</depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>ping360_sonar_msgs</depend>
+  <depend>waterlinked_a50</depend>
+  <depend>px4_msgs</depend>
+  <depend>mocap4r2_msgs</depend>
+
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

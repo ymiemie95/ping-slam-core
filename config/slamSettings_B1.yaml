@@ -1,0 +1,20 @@
+# DVL/IMU odometry parameters. Mount angles are in radians, positions in metres.
+ekfNode:
+  ros__parameters:
+    use_sim_time: true
+    rollMountIMU: 0.0
+    pitchMountIMU: 0.0
+    yawMountIMU: 0.0
+    xPositionIMU: -0.05
+    yPositionIMU: 0.11
+    zPositionIMU: 0.4
+    gyroBiasX: 0.0
+    gyroBiasY: 0.0
+    gyroBiasZ: 0.0
+    rollMountDVL: 0.0
+    pitchMountDVL: 0.0
+    yawMountDVL: 2.35619449019
+    xPositionDVL: -0.05
+    yPositionDVL: 0.2
+    zPositionDVL: 0.48
+    zPositionDepthSensor: 0.0

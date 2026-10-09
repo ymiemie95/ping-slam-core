@@ -1,0 +1,104 @@
+sonar_slam_backend:
+  ros__parameters:
+
+    # ============================================================
+    # ROS / 插件层
+    # ============================================================
+    use_sim_time: true
+
+    odom_frame:  odom
+    base_frame:  base_link
+    map_frame:   map
+    scan_topic:  /scan
+
+    # 长包仿真时长 1906s, 默认 tf_buffer 30s 会静默丢帧
+    tf_buffer_duration: 4000.0
+    transform_timeout:  0.5
+
+    mode: mapping
+
+    solver_plugin:        solver_plugins::CeresSolver
+    ceres_linear_solver:  SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type:    TRADITIONAL_DOGLEG
+    # 放宽回环门限后必须有鲁棒核, 防单条假回环毁图
+    ceres_loss_function:  HuberLoss
+
+    resolution:              0.05
+    map_update_interval:     1.0
+    stack_size_to_use:       40000000
+    enable_interactive_mode: false
+    debug_logging:           true    # 盯 LOOP:fine 与 "Loop closed!", 调完关
+
+    # 与 sonar_to_laserscan_params.yaml 一致
+    max_laser_range: 15.0
+    min_laser_range: 0.7
+
+    # ============================================================
+    # Karto Mapper 通用
+    # ============================================================
+    use_scan_matching: true
+    use_scan_barycenter: false
+
+    minimum_time_interval:   0.5
+    minimum_travel_distance: 0.15
+    minimum_travel_heading:  0.05
+
+    # ★P1 v3 定稿 2026-09-02★ P9配方 三样本 0.1717/0.1711/0.1743 (均值0.1724, 原定稿带0.176-0.196)
+    scan_buffer_size: 200
+    scan_buffer_maximum_scan_distance: 100.0
+
+    # nearChain 实测响应仅 0.028-0.05, 原0.10一条边都连不上
+    link_match_minimum_response_fine: 0.06
+    link_scan_maximum_distance:       8.0   # ★P1 v3★ P9配方
+
+    # ============================================================
+    # 回环检测
+    # ============================================================
+    do_loop_closing: true
+    loop_match_minimum_chain_size: 5      # ★P1 v3★
+
+    # ★注意★ 此参数在 setParam 里被平方: 写10.0 → 内部100
+    # (同被平方的还有 distance/angle_variance_penalty)
+    loop_match_maximum_variance_coarse: 10.0
+
+    loop_match_minimum_response_coarse: 0.10
+    # ★关键改动★ 原0.15高于数据可达上限(SEQ响应P90=0.139):
+    # 实测四条真回环 fine=0.0945/0.1091/0.1038/0.1048 全被0.15拒掉。
+    # 0.08≈SEQ中位, 这四条全部放行。若仍无 "Loop closed!" 再降0.06,
+    # 但同时盯 dHeading: 真重访≈0, ±1.9rad 的是180°对称假回环。
+    loop_match_minimum_response_fine:   0.08
+    loop_search_maximum_distance: 4.0     # ★P1 v3★
+    loop_match_maximum_position_jump: 10.0    # 大池: 真回环漂移本身10m量级, 假回环镜像跳~29m 小池=0.6
+
+    # ============================================================
+    # 相关网格 —— 顺序/近邻匹配的小网格
+    # ============================================================
+    correlation_search_space_dimension:       2.0    # 2.0/0.05=40 ✓
+    correlation_search_space_resolution:      0.05
+    correlation_search_space_smear_deviation: 0.20   # 稀疏点云, 2×分辨率
+
+    # ============================================================
+    # 回环相关网格 —— 大网格
+    # ============================================================
+    loop_search_space_dimension:       4.0    # ★2026-08-27 定稿★ 5→4 配 2m 搜索半径
+    loop_search_space_resolution:      0.2
+    loop_search_space_smear_deviation: 0.4
+
+    # ============================================================
+    # 扫描匹配器
+    # ============================================================
+    # ★2026-08-24 调参定稿★ 0.5→1.0: P3 全量扫参唯一显著增益项。
+    # 对齐APE(evo -a, t_max_diff 0.06): 0.5→0.144, 0.8→0.126, 1.0→0.121-0.128,
+    # 1.5→0.119-0.128, 2.0→0.127(回落); 纯里程计对照1.20(增益是融合而非退化)。
+    # 交叉验证: P1 0.231→0.202(-12.5%), P2 0.215→0.221(噪声内持平)。
+    distance_variance_penalty: 0.5        # ★P1 v3★
+    # 内部平方为0.0625: 15°扣22%, 30°触底0.3 —— 压制假峰跳变的主力
+    angle_variance_penalty:    0.25
+    fine_search_angle_offset:  0.0052
+    coarse_search_angle_offset: 0.52    # ±30°, 回环匹配(doPenalize=false)吸收圈间漂移
+    coarse_angle_resolution:    0.052
+    minimum_angle_penalty:    0.3       # 原0.9=惩罚失效, 60°跳变只扣10%
+    minimum_distance_penalty: 0.5
+    use_response_expansion: false       # 点少时它专找±60°假峰, 关掉

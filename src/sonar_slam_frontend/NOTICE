@@ -1,0 +1,32 @@
+sonar_slam_frontend — front end of the Ping360 sonar SLAM system (BSD-3-Clause)
+
+Provenance
+----------
+src/stateEstimation/  and  src/generalHelpfulTools/  are derived from
+constructor-robotics/underwaterSLAM_2D_lowCost (ROS 2 package
+"low_cost_underwater_slam", maintainer Tim Hansen, Constructor University
+Bremen; its package.xml declares the BSD license), the open-source stack of
+
+  T. Hansen and A. Birk, "An Open-Source Solution for Fast and Accurate
+  Underwater Mapping with a Low-Cost Mechanical Scanning Sonar,"
+  Proc. IEEE ICRA, 2024.
+
+The derived EKF provides the DVL/IMU odometry used by Ping-SLAM.
+
+Modifications (2026), see the "Modified" comments at the top of each file
+for the full list:
+  src/stateEstimation/ekfDVL.cpp, ekfDVL.h
+    - three-axis IMU mount rotation (rollMountIMU/pitchMountIMU/yawMountIMU)
+      applied inside the filter, so vertical / inverted IMUs are supported
+  src/stateEstimation/ekfDVLnode.cpp
+    - three-axis DVL mount rotation (replaces the single yawRotationDVL)
+    - constant gyro-bias subtraction (gyroBiasX/Y/Z) before fusion
+    - DVL reports flagged invalid are skipped instead of zero-filled
+  src/generalHelpfulTools/
+    - retained Eigen/tf2 helpers use a modified build layout
+    - unused PeakFinder code is not distributed in this package
+
+Written for this project (not derived from upstream):
+  src/sonarToLaserscan/sonarToLaserscan.cpp   pseudo-scan builder
+  src/tools/rosGtSaver.cpp                     mocap ground-truth dump
+  scripts/analyze_scan_bag.py
