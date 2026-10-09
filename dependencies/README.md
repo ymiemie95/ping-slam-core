@@ -28,5 +28,5 @@ Matplotlib is used by optional scan-analysis and map-rendering scripts.
 Docker is needed only for the experiment harness in `tuning/`; interactive
 launch and playback can run directly in a ROS 2 workspace.
 
-See the [tested environment](../README.md#tested-environment) for the build
-and runtime checks performed.
+The reference dependency versions are Ceres 1.14.0, Eigen 3.3.7, TBB 2020.1,
+and nav2_map_server 0.4.7.

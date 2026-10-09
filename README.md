@@ -91,18 +91,6 @@ dependencies/ clean-machine dependency notes
 Experimental bags, generated maps, build products, tuning archives, and raw
 videos are intentionally ignored by Git.
 
-## Tested environment
-
-All seven ROS packages built in fresh build/install directories on Ubuntu
-20.04 with ROS 2 Foxy, Ceres 1.14.0, Eigen 3.3.7, TBB 2020.1, and
-nav2_map_server 0.4.7. A 65-second P6 replay verified pseudo scans, map
-publication, map saving, optimized trajectory export, and clean shutdown.
-All 18 dataset selections resolve to their required configuration files.
-
-This was a short functional check using the locally migrated P6 bag described
-in [`REPRODUCE.md`](REPRODUCE.md), not a full-dataset accuracy evaluation.
-Unit tests and provisioning an entirely new container were not performed.
-
 ## License
 
 Packages retain their own licenses and third-party notices. The front end is
