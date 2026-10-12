@@ -16,3 +16,11 @@
 Extract the ZIP archives at the workspace root. They provide the bag directories expected by `tuning/common.sh`. F1 also includes `recordresults/comparative/F1_kcpool/F1_gt.txt` in TUM format. F2–F4 have no reference trajectories.
 
 Build the supplied ROS message definitions before replay. The reference environment is ROS 2 Foxy. Set `PING_SLAM_DATA_ROOT` and `PING_SLAM_GT_ROOT` to container-visible paths when using the experiment harness.
+
+## Dataset license
+
+The self-collected F1–F4 datasets and the supplied F1 TagSLAM reference
+trajectory are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+See [DATA_LICENSE.txt](DATA_LICENSE.txt) for the scope, attribution information,
+and full license text. This license does not replace package-level software
+licenses or apply to third-party public datasets.
