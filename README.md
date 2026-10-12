@@ -12,9 +12,12 @@ which produce the trajectory and sonar map.
 
 **Project website:** https://ymiemie95.github.io/ping-slam/
 
-Sonar bags, motion-capture ground truth, large experiment archives, and the
-manuscript source are not stored here. Obtain them separately and set the
-paths described in [`REPRODUCE.md`](REPRODUCE.md).
+The four self-collected F1–F4 recordings are available as ZIP downloads in
+[GitHub Releases](https://github.com/ymiemie95/ping-slam-core/releases/tag/field-datasets-v1.0).
+See [`DATASETS.md`](DATASETS.md) for download links, reference availability,
+and extraction instructions. Public benchmark recordings and manuscript
+sources are distributed separately. Set the paths described in
+[`REPRODUCE.md`](REPRODUCE.md).
 
 ## Requirements
 

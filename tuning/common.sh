@@ -46,7 +46,12 @@ bag_for() {
     P12) echo "$DATA_ROOT/P12_DataSet12" ;;
     P13) echo "$DATA_ROOT/P13_DataSet13" ;;
     B1)  echo "$DATA_ROOT/B1_ValentinBunkerKellerNew" ;;   # 3160s, 无真值
-    F1)     echo "${PING_SLAM_LOCAL_DATA_ROOT:-$DATA_ROOT}/pool_r3_s4" ;;
+    F1)
+      if [ -n "${PING_SLAM_LOCAL_DATA_ROOT:-}" ]; then
+        echo "$PING_SLAM_LOCAL_DATA_ROOT/pool_r3_s4"
+      else
+        echo "$DATA_ROOT/F1_pool_r3_s4"
+      fi ;;
     F1S1)   echo "${PING_SLAM_LOCAL_DATA_ROOT:-$DATA_ROOT}/pool_r3_s1" ;;
     F1S2)   echo "${PING_SLAM_LOCAL_DATA_ROOT:-$DATA_ROOT}/pool_r3_s2" ;;
     F1R4S2) echo "${PING_SLAM_LOCAL_DATA_ROOT:-$DATA_ROOT}/pool_r4_s2" ;;

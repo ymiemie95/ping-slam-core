@@ -16,8 +16,8 @@ not committed. The harness accepts these variables:
 | `PING_SLAM_CONTAINER` | running container name |
 | `PING_SLAM_DATA_ROOT` | dataset root inside the container |
 | `PING_SLAM_GT_ROOT` | ground-truth root visible inside the container |
-| `PING_SLAM_LOCAL_DATA_ROOT` | optional root for private F1 bags |
-| `PING_SLAM_LOCAL_GT_ROOT` | optional container-visible root for private F1 ground truth |
+| `PING_SLAM_LOCAL_DATA_ROOT` | optional root for legacy F1 bag paths |
+| `PING_SLAM_LOCAL_GT_ROOT` | optional container-visible root for additional F1 reference trajectories |
 
 `tuning/common.sh` is the single dataset mapping table. P2 and P9 currently
 reuse the P1 EKF settings because no separate archived settings were retained.
@@ -59,8 +59,10 @@ existing output directories are not overwritten.
 ## Data and motion-capture messages
 
 The bag-directory and ground-truth filenames are defined in `tuning/common.sh`.
-F1-F4 are locally acquired data and are not included. Obtain the recorded data
-and its reference trajectories separately before running the commands above.
+F1–F4 are locally acquired recordings distributed through GitHub Releases.
+Download them using [`DATASETS.md`](DATASETS.md) and extract the ZIP files at
+the workspace root. F1 includes its TagSLAM reference trajectory. F2–F4 have
+no reference trajectories and are evaluated using map quality.
 
 This checkout provides `mocap4r2_msgs`. Some original bags report
 `mocap_msgs4r2/msg/RigidBodies` or `mocap_msgs4r2/msg/Markers`. A bag requiring
